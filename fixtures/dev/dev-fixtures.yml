@@ -1,0 +1,393 @@
+# Contact messages
+App\Entity\ContactMessage:
+  contactmessage{1..5}:
+    name: <name()>
+    subject: <word()>
+    email: <safeEmail()>
+    phone: <phoneNumber()>
+    message: <paragraph()>
+    description: <paragraph()>
+    checked: <boolean(70)>
+    answered: <boolean(30)>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# Newsletter contacts
+App\Entity\NewsletterContact:
+  newslettercontact{1..5}:
+    email: <safeEmail()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# Teachers
+App\Entity\Teacher:
+  teacher{1..2}:
+    name: <name()>
+    description: <paragraph()>
+    position: <numberBetween(1, 2)>
+    color: <numberBetween(0, 3)>
+    showInHomepage: true
+
+# Teacher absences
+App\Entity\TeacherAbsence:
+  teacherabsence{1..2}:
+    teacher: '@teacher<numberBetween(1,2)>'
+    type: <numberBetween(0, 1)>
+    day: <dateTimeThisMonth()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# Students
+App\Entity\Student:
+  student{1..2}:
+    trainingCenter: '@trainingcenter1'
+    dni: <bothify('########?')>
+    name: <name()>
+    surname: <firstName()>
+    birthDate: <dateTimeBetween()>
+    phone: <phoneNumber()>
+    email: <safeEmail()>
+    address: <address()>
+    payment: <numberBetween(0, 1)>
+    city: '@city*'
+    bank: '@bank1'
+    tariff: '@tariff*'
+    parent: '@person1'
+    schedule: <name()>
+    comments: <paragraph()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+  student3:
+    dni: <bothify('########?')>
+    name: <name()>
+    surname: <firstName()>
+    birthDate: <dateTimeBetween()>
+    phone: <phoneNumber()>
+    email: <safeEmail()>
+    address: <address()>
+    payment: <numberBetween(0, 1)>
+    city: '@city*'
+    bank: '@bank2'
+    tariff: '@tariff1'
+    schedule: <name()>
+    comments: <paragraph()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# Student absences
+App\Entity\StudentAbsence:
+  studentabsence{1..2}:
+    student: '@student<numberBetween(1,2)>'
+    day: <dateTimeThisMonth()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# Student evaluations
+App\Entity\StudentEvaluation:
+  studentevaluation{1..2}:
+    student: '@student<numberBetween(1,2)>'
+    course: <numberBetween(2024,2026)>
+    evaluation: <current()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# Services
+App\Entity\Service:
+  service{1..2}:
+    title: <name()>
+    description: <paragraph()>
+    position: <numberBetween(1, 2)>
+
+# Training centers
+App\Entity\TrainingCenter:
+  trainingcenter{1..2}:
+    name: <city()>
+    city: '@city1'
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# Provinces
+App\Entity\Province:
+  province{1..2}:
+    code: <postcode()>
+    name: <city()>
+    country: <country()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# Cities
+App\Entity\City:
+  city{1..2}:
+    name: <city()>
+    postalCode: <postcode()>
+    province: '@province*'
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# BankCreditorSepa
+App\Entity\BankCreditorSepa:
+  bankCreditorSepa{1..2}:
+    name: <name()>
+    organizationId: <bothify('########?')>
+    creditorName: <company()>
+    iban: <iban('ES')>
+    bic: <swiftBicNumber()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# Banks
+App\Entity\Bank:
+  bank{1..2}:
+    name: <company()>
+    accountNumber: <iban('ES')>
+    swiftCode: <swiftBicNumber()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# Persons
+App\Entity\Person:
+  person1:
+    dni: <bothify('########?')>
+    name: <name()>
+    surname: <firstName()>
+    phone: <phoneNumber()>
+    email: <safeEmail()>
+    address: <address()>
+    city: '@city*'
+    payment: <numberBetween(0, 1)>
+    bank: '@bank1'
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# PreRegisters
+App\Entity\PreRegister:
+  preregister1:
+    dni: <bothify('########?')>
+    name: <firstName()>
+    surname: <lastName()>
+    email: <safeEmail()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+
+# ClassGroups
+App\Entity\ClassGroup:
+  classgroup{1..2}:
+    trainingCenter: '@trainingcenter1'
+    code: <ean8()>
+    name: <name()>
+    book: <name()>
+    color: <hexcolor()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    enabled: true
+
+# Tariffs
+App\Entity\Tariff:
+  tariff{1..2}:
+    year: <year('now')>
+    price: <randomFloat(1, 5)>
+    type: <numberBetween(0, 4)>
+    name: <name()>
+
+# Events
+App\Entity\Event:
+  event1:
+    begin: <dateTimeThisMonth()>
+    end: <dateTimeThisMonth()>
+    teacher: '@teacher1'
+    classroom: <numberBetween(0, 3)>
+    group: '@classgroup1'
+    students:
+      - '@student1'
+      - '@student2'
+    next: '@event2'
+    dayFrequencyRepeat: <randomDigit()>
+    until: <dateTimeThisMonth()>
+  event2:
+    begin: <dateTimeThisMonth()>
+    end: <dateTimeThisMonth()>
+    teacher: '@teacher1'
+    classroom: <numberBetween(0, 3)>
+    group: '@classgroup1'
+    students:
+      - '@student1'
+      - '@student2'
+    previous: '@event1'
+    dayFrequencyRepeat: <randomDigit()>
+    until: <dateTimeThisMonth()>
+  event3:
+    begin: <dateTimeThisMonth()>
+    end: <dateTimeThisMonth()>
+    teacher: '@teacher1'
+    classroom: <numberBetween(0, 3)>
+    group: '@classgroup2'
+    students:
+      - '@student1'
+
+# Receipt Groups
+App\Entity\ReceiptGroup:
+  receiptGroup{1..2}:
+    trainingCenter: '@trainingcenter1'
+    bankCreditorSepa: '@bankCreditorSepa<current()>'
+    baseAmount: <randomFloat(1, 5)>
+    month: <month()>
+    year: <year()>
+
+# Receipts
+App\Entity\Receipt:
+  receipt{1..2}:
+    trainingCenter: '@trainingcenter1'
+    student: '@student<current()>'
+    person: '@person1'
+    date: '<dateTime()>'
+    isPayed: <boolean()>
+    baseAmount: <randomFloat(1, 5)>
+    discountApplied: <boolean()>
+    month: <month()>
+    year: <year()>
+
+# Receipt lines
+App\Entity\ReceiptLine:
+  lineReceipt{1..2}:
+    description: <sentence()>
+    units: <numberBetween(1, 100)>
+    priceUnit: <randomFloat(1, 5)>
+    discount: <randomFloat(1, 5)>
+    total: <randomFloat(1, 5)>
+    receipt: '@receipt<current()>'
+
+# Invoices
+App\Entity\Invoice:
+  invoice{1..2}:
+    trainingCenter: '@trainingcenter1'
+    receipt: '@receipt<current()>'
+    student: '@student<current()>'
+    person: '@person1'
+    date: '<dateTime()>'
+    isPayed: <boolean()>
+    baseAmount: <randomFloat(1, 5)>
+    taxPercentage: 0
+    irpfPercentage: 15
+    discountApplied: <boolean()>
+    totalAmount: <randomFloat(1, 5)>
+    month: <month()>
+    year: <year()>
+
+# Invoice lines
+App\Entity\InvoiceLine:
+  lineInvoice{1..2}:
+    description: <sentence()>
+    units: <numberBetween(1, 100)>
+    priceUnit: <randomFloat(1, 5)>
+    discount: <randomFloat(1, 5)>
+    total: <randomFloat(1, 5)>
+    invoice: '@invoice<current()>'
+
+# Spending categories
+App\Entity\SpendingCategory:
+  spendingcategory{1..2}:
+    name: <sentence()>
+
+# Spendings
+App\Entity\Spending:
+  spending{1..2}:
+    date: '<dateTime()>'
+    category: '@spendingcategory1'
+    provider: '@provider1'
+    description: <sentence()>
+    baseAmount: <randomFloat(1, 5)>
+    isPayed: <boolean()>
+    paymentMethod: <numberBetween(0, 2)>
+
+# Providers
+App\Entity\Provider:
+  provider{1..2}:
+    tic: <word()>
+    name: <word()>
+    address: <word()>
+    city: '@city<numberBetween(1, 2)>'
+    phone: <word()>
+    email: <safeEmail()>
+    createdAt: <dateTimeBetween('-2 months', '-1 months')>
+    updatedAt: <dateTimeThisMonth()>
+    paymentMethod: <numberBetween(0, 2)>
+    enabled: true
+
+## Users
+App\Entity\User:
+  super_admin:
+    username: super_admin
+    usernameCanonical: super_admin
+    plainPassword: passwd
+    email: super_admin@email.com
+    emailCanonical: super_admin@email.com
+    enabled: true
+    roles:
+      - ROLE_SUPER_ADMIN
+  admin:
+    username: admin
+    usernameCanonical: admin
+    plainPassword: passwd
+    email: admin@email.com
+    emailCanonical: admin@email.com
+    enabled: true
+    roles:
+      - ROLE_ADMIN
+  admin_disabled:
+    username: admin_disabled
+    usernameCanonical: admin_disabled
+    plainPassword: passwd
+    email: admin_disabled@email.com
+    emailCanonical: admin_disabled@email.com
+    enabled: false
+    roles:
+      - ROLE_ADMIN
+  teacher:
+    username: teacher
+    usernameCanonical: teacher
+    plainPassword: passwd
+    email: teacher@email.com
+    emailCanonical: teacher@email.com
+    enabled: true
+    roles:
+      - ROLE_MANAGER
+  teacher_disabled:
+    username: teacher_disabled
+    usernameCanonical: teacher_disabled
+    plainPassword: passwd
+    email: teacher_disabled@email.com
+    emailCanonical: teacher_disabled@email.com
+    enabled: false
+    roles:
+      - ROLE_MANAGER
+  cms:
+    username: cms
+    usernameCanonical: cms
+    plainPassword: passwd
+    email: cms@email.com
+    emailCanonical: cms@email.com
+    enabled: true
+    roles:
+      - ROLE_CMS
+  cms_disabled:
+    username: cms_disabled
+    usernameCanonical: cms_disabled
+    plainPassword: passwd
+    email: cms_disabled@email.com
+    emailCanonical: cms_disabled@email.com
+    enabled: false
+    roles:
+      - ROLE_CMS
