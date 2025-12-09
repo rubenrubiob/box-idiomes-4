@@ -10,11 +10,11 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: SpendingRepository::class)]
 #[Vich\Uploadable]
-class Spending extends AbstractBase
+class Spending extends AbstractBase implements \Stringable
 {
     use BaseAmountTrait;
     use DocumentFileTrait;
