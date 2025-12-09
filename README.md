@@ -44,7 +44,7 @@ In a production environment remember to properly configure Messenger queue consu
 
 #### Code Style notes
 
-Execute following link to be sure that php-cs-fixer will be applied automatically before every commit. Please, check https://github.com/FriendsOfPHP/PHP-CS-Fixer to install it globally (manual) in your system.
+Execute following link to be sure that php-cs-fixer will be applied automatically before each Git commit.
 
 ```bash
 $ ln -s ../../scripts/githooks/pre-commit .git/hooks/pre-commit
