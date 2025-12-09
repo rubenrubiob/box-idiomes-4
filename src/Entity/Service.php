@@ -11,12 +11,12 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
 #[ORM\Table]
 #[Vich\Uploadable]
-class Service extends AbstractBase
+class Service extends AbstractBase implements \Stringable
 {
     use DescriptionTrait;
     use ImageTrait;
