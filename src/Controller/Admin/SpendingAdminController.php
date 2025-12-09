@@ -15,13 +15,11 @@ final class SpendingAdminController extends CRUDController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function duplicateAction(Request $request, EntityManagerInterface $em): Response
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Spending $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         // new spending
         $newSpending = new Spending();
         $newSpending
