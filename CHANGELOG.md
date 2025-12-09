@@ -1,11 +1,26 @@
 Changelog
 =========
 
-##### Version 5.8.06 (WIP)
+##### Version 5.8.07 (WIP)
  * fix bugs
 
+##### Version 5.8.06 (2025-12-09)
+ * improve admin top logo bar
+ * simplfy admin tags version management
+ * Symfony v7.3.3 update
+ * remove asset-map:comiple command from Composer scripts
+ * remove unused Travis config
+ * refactor Twig extension attributes
+ * add StudentEvaluation entity & repository
+ * PDF JS update
+ * fix missing Spending PDF preview
+ * refactor PDF button integration for consistency and improved attachment handling
+ * update `Invoice` entity: set `TAX_IRPF` constant to 0
+ * fix `OneToMany` annotation order, and handle nullable `getStudent` call
+ * fix Vich\UploaderBundle\Mapping\Annotation deprecation
+
 ##### Version 5.8.05 (2025-08-26)
- * Symfony v7.3 updagrade
+ * Symfony v7.3 upgrade
  * Composer dependencies update
  * Importmap dependencies update
  * remove php-cs-fixer global installation requirement
