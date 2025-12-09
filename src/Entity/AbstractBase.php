@@ -6,7 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
-abstract class AbstractBase
+abstract class AbstractBase implements \Stringable
 {
     public const string DEFAULT_NULL_STRING = '---';
     public const string DEFAULT_NULL_DATE_STRING = '--/--/----';
@@ -14,6 +14,7 @@ abstract class AbstractBase
     public const string DATE_STRING_FORMAT = 'd/m/Y';
     public const string DATETIME_STRING_FORMAT = 'd/m/Y H:i';
     public const string DATABASE_DATE_STRING_FORMAT = 'Y-m-d';
+    public const string HUMAN_DATE_STRING_FORMAT = 'd-m-Y';
     public const string DATABASE_DATETIME_STRING_FORMAT = 'Y-m-d H:i:s';
 
     #[ORM\Id]

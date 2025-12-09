@@ -20,6 +20,13 @@ final class EventAdminController extends AbstractAdminController
 {
     public function editAction(Request $request): Response
     {
+        /** @var Event $object */
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
+
+        // TODO remove duplicated code
         $this->assertObjectExists($request, true);
         $id = $request->get($this->admin->getIdParameter());
         /** @var Event $object */
@@ -199,14 +206,14 @@ final class EventAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_MANAGER)]
     public function apigetAction(Request $request, EntityManagerInterface $em): JsonResponse
     {
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Event $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
+        $this->admin->setSubject($object);
         if (!$object->getEnabled()) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
+            throw $this->createNotFoundException(sprintf('unable to find the object with id: %d', $object->getId()));
         }
         // init synchro process, create new references
         $items = $em->getRepository(EventStudent::class)->getItemsByEvent($object);
@@ -314,7 +321,7 @@ final class EventAdminController extends AbstractAdminController
 
     private function getEvent(Request $request): Event
     {
-        $id = $request->get($this->admin->getIdParameter());
+        $id = $request->query->get($this->admin->getIdParameter());
         /** @var Event $object */
         $object = $this->admin->getObject($id);
         if (!$object) {
@@ -329,7 +336,7 @@ final class EventAdminController extends AbstractAdminController
 
     private function getStudent(Request $request): Student
     {
-        $sid = $request->get('student');
+        $sid = $request->query->get('student');
         $student = $this->mr->getManager()->getRepository(Student::class)->find((int) $sid);
         if (!$student) {
             throw $this->createNotFoundException(sprintf('unable to find the student with id: %s', $sid));
