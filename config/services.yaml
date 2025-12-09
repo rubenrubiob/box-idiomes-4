@@ -31,7 +31,7 @@ parameters:
     mailer_destination:         '%env(string:MAILER_DESTINATION)%'
     delivery_dev_address:       '%env(string:DEV_DELIVERY_ADDRESS)%'
     admin_color:                '%env(string:ADMIN_COLOR)%'
-    admin_tag_version:          '508006'
+    admin_tag_version:          '508007'
     admin_is_stage:             '%env(bool:ADMIN_IS_STAGE)%'
     mailing_per_day_limit:      '%env(int:MAILING_PER_DAY_LIMIT)%'
     preregister_period_is_open: false
