@@ -10,9 +10,12 @@ use App\Entity\Student;
 use App\Entity\TrainingCenter;
 use App\Enum\InvoiceYearMonthEnum;
 use App\Enum\StudentPaymentEnum;
+use App\Repository\PersonRepository;
+use App\Repository\StudentRepository;
 use Sonata\AdminBundle\Datagrid\DatagridInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelAutocompleteType;
@@ -459,9 +462,34 @@ final class ReceiptAdmin extends AbstractBaseAdmin
         ;
     }
 
+    protected function configureQuery(ProxyQueryInterface $query): ProxyQueryInterface
+    {
+        $query = parent::configureQuery($query);
+        $rootAlias = current($query->getRootAliases());
+        $query
+            ->addSelect(StudentRepository::ALIAS)
+            ->addSelect(PersonRepository::ALIAS)
+//            ->addSelect(sprintf('COUNT(%s.id) AS numberoflines', ReceiptLineRepository::ALIAS))
+            ->leftJoin(sprintf('%s.student', $rootAlias), StudentRepository::ALIAS)
+            ->leftJoin(sprintf('%s.person', $rootAlias), PersonRepository::ALIAS)
+//            ->leftJoin(sprintf('%s.lines', $rootAlias), ReceiptLineRepository::ALIAS)
+//            ->addGroupBy($rootAlias)
+        ;
+
+        return $query;
+    }
+
     protected function configureListFields(ListMapper $list): void
     {
         $list
+            ->add(
+                'numberoflines',
+                null,
+                [
+                    'label' => 'backend.admin.receipt.id',
+                    'virtual_field' => true,
+                ]
+            )
             ->add(
                 'id',
                 null,
