@@ -3,6 +3,7 @@
 namespace App\Admin;
 
 use App\Doctrine\Enum\SortOrderTypeEnum;
+use App\Entity\AbstractBase;
 use App\Entity\Person;
 use App\Entity\Receipt;
 use App\Entity\Student;
@@ -12,6 +13,8 @@ use App\Enum\StudentPaymentEnum;
 use Sonata\AdminBundle\Datagrid\DatagridInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelAutocompleteType;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
@@ -508,6 +511,15 @@ final class InvoiceAdmin extends AbstractBaseAdmin
         ;
     }
 
+    protected function configureQuery(ProxyQueryInterface $query): ProxyQueryInterface
+    {
+        $query = parent::configureQuery($query);
+        $rootAlias = current($query->getRootAliases());
+        $query->leftJoin($rootAlias.'.student', 's');
+
+        return $query;
+    }
+
     protected function configureListFields(ListMapper $list): void
     {
         $list
@@ -521,10 +533,10 @@ final class InvoiceAdmin extends AbstractBaseAdmin
             )
             ->add(
                 'date',
-                null,
+                FieldDescriptionInterface::TYPE_DATE,
                 [
                     'label' => 'backend.admin.receipt.date',
-                    'template' => 'Admin/Cells/list__cell_receipt_date.html.twig',
+                    'format' => AbstractBase::DATE_STRING_FORMAT,
                     'editable' => false,
                     'header_class' => 'text-center',
                     'row_align' => 'center',
@@ -535,7 +547,6 @@ final class InvoiceAdmin extends AbstractBaseAdmin
                 null,
                 [
                     'label' => 'backend.admin.invoice.year',
-                    'template' => 'Admin/Cells/list__cell_event_year.html.twig',
                     'editable' => false,
                     'header_class' => 'text-center',
                     'row_align' => 'center',

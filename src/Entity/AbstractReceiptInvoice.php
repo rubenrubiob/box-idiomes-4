@@ -15,7 +15,7 @@ abstract class AbstractReceiptInvoice extends AbstractBase
     use TrainingCenterTrait;
     use YearTrait;
 
-    #[ORM\ManyToOne(targetEntity: Student::class)]
+    #[ORM\ManyToOne(targetEntity: Student::class, fetch: 'EAGER')]
     #[ORM\JoinColumn(name: 'student_id', referencedColumnName: 'id')]
     protected ?Student $student = null;
 
