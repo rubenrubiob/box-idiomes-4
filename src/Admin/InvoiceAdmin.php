@@ -515,7 +515,12 @@ final class InvoiceAdmin extends AbstractBaseAdmin
     {
         $query = parent::configureQuery($query);
         $rootAlias = current($query->getRootAliases());
-        $query->leftJoin($rootAlias.'.student', 's');
+        $query
+            ->addSelect('s')
+            ->addSelect('p')
+            ->leftJoin($rootAlias.'.student', 's')
+            ->leftJoin('s.parent', 'p')
+        ;
 
         return $query;
     }
@@ -665,7 +670,8 @@ final class InvoiceAdmin extends AbstractBaseAdmin
                         ],
                     ],
                 ]
-            );
+            )
+        ;
     }
 
     public function configureExportFields(): array
