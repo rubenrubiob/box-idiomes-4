@@ -3,6 +3,7 @@
 namespace App\Admin;
 
 use App\Doctrine\Enum\SortOrderTypeEnum;
+use App\Entity\ClassGroup;
 use App\Entity\Student;
 use App\Entity\StudentEvaluation;
 use App\Enum\ReceiptYearMonthEnum;
@@ -47,21 +48,6 @@ final class StudentEvaluationAdmin extends AbstractBaseAdmin
             ->add('preview', $this->getRouterIdParameter().'/preview')
             ->add('notification', $this->getRouterIdParameter().'/notification')
         ;
-    }
-
-    protected function configureQuery(ProxyQueryInterface $query): ProxyQueryInterface
-    {
-        $query = parent::configureQuery($query);
-        $rootAlias = current($query->getRootAliases());
-        $query
-            ->addSelect(StudentRepository::ALIAS)
-            ->leftJoin(sprintf('%s.student', $rootAlias), StudentRepository::ALIAS)
-            ->addOrderBy(sprintf('%s.evaluation', $rootAlias), SortOrderTypeEnum::ASC)
-            ->addOrderBy(sprintf('%s.surname', StudentRepository::ALIAS), SortOrderTypeEnum::ASC)
-            ->addOrderBy(sprintf('%s.name', StudentRepository::ALIAS), SortOrderTypeEnum::ASC)
-        ;
-
-        return $query;
     }
 
     protected function configureFormFields(FormMapper $form): void
@@ -235,6 +221,18 @@ final class StudentEvaluationAdmin extends AbstractBaseAdmin
                 ]
             )
             ->add(
+                'student.events.group',
+                null,
+                [
+                    'label' => 'backend.admin.event.group',
+                    'field_type' => EntityType::class,
+                    'field_options' => [
+                        'class' => ClassGroup::class,
+                        'query_builder' => $this->em->getRepository(ClassGroup::class)->getEnabledSortedByCodeQB(),
+                    ],
+                ]
+            )
+            ->add(
                 'writting',
                 null,
                 [
@@ -311,6 +309,21 @@ final class StudentEvaluationAdmin extends AbstractBaseAdmin
                 ]
             )
         ;
+    }
+
+    protected function configureQuery(ProxyQueryInterface $query): ProxyQueryInterface
+    {
+        $query = parent::configureQuery($query);
+        $rootAlias = current($query->getRootAliases());
+        $query
+            ->addSelect(StudentRepository::ALIAS)
+            ->leftJoin(sprintf('%s.student', $rootAlias), StudentRepository::ALIAS)
+            ->addOrderBy(sprintf('%s.evaluation', $rootAlias), SortOrderTypeEnum::ASC)
+            ->addOrderBy(sprintf('%s.surname', StudentRepository::ALIAS), SortOrderTypeEnum::ASC)
+            ->addOrderBy(sprintf('%s.name', StudentRepository::ALIAS), SortOrderTypeEnum::ASC)
+        ;
+
+        return $query;
     }
 
     protected function configureListFields(ListMapper $list): void
