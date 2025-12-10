@@ -9,6 +9,7 @@ use App\Entity\Event;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Enum\EventClassroomTypeEnum;
+use App\Repository\StudentRepository;
 use Sonata\AdminBundle\Datagrid\DatagridInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -220,11 +221,11 @@ final class EventAdmin extends AbstractBaseAdmin
         $query = parent::configureQuery($query);
         $rootAlias = current($query->getRootAliases());
         $query
-            ->leftJoin($rootAlias.'.students', 's')
-            ->andWhere($rootAlias.'.enabled = :enabled')
+            ->addSelect(sprintf('COUNT(%s.id) AS studentsCount', StudentRepository::ALIAS))
+            ->leftJoin(sprintf('%s.students', $rootAlias), StudentRepository::ALIAS)
+            ->andWhere(sprintf('%s.enabled = :enabled', $rootAlias))
             ->setParameter('enabled', true)
-            ->addSelect('COUNT(s.id) AS studentsCount')
-            ->groupBy($rootAlias.'.id')
+            ->groupBy(sprintf('%s.id', $rootAlias))
         ;
 
         return $query;
