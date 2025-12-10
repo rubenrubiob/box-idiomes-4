@@ -1,9 +1,9 @@
 {% extends "@SonataAdmin/CRUD/base_list_field.html.twig" %}
 
 {% block field %}
-    {% if object.students | length > 0 %}
+    {% if value > 0 %}
         <span class="label label-success">
-            {{ object.students | length | i }}
+            {{ value | i }}
         </span>
     {% else %}
         <span class="label label-warning">

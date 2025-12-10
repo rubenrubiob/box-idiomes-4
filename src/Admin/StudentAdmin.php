@@ -16,6 +16,9 @@ use App\Enum\SchoolYearChoicesGeneratorEnum;
 use App\Enum\StudentAgesEnum;
 use App\Enum\StudentPaymentEnum;
 use App\Model\BeginEndSchoolYearMoment;
+use App\Repository\BankRepository;
+use App\Repository\EventRepository;
+use App\Repository\PersonRepository;
 use Sonata\AdminBundle\Datagrid\DatagridInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -646,6 +649,22 @@ final class StudentAdmin extends AbstractBaseAdmin
         }
 
         return false;
+    }
+
+    protected function configureQuery(\Sonata\AdminBundle\Datagrid\ProxyQueryInterface $query): ProxyQueryInterface
+    {
+        $query = parent::configureQuery($query);
+        $rootAlias = current($query->getRootAliases());
+        $query
+            ->addSelect(PersonRepository::ALIAS)
+            ->addSelect(BankRepository::ALIAS)
+            ->addSelect(EventRepository::ALIAS)
+            ->leftJoin(sprintf('%s.parent', $rootAlias), PersonRepository::ALIAS)
+            ->leftJoin(sprintf('%s.bank', $rootAlias), BankRepository::ALIAS)
+            ->leftJoin(sprintf('%s.events', $rootAlias), EventRepository::ALIAS)
+        ;
+
+        return $query;
     }
 
     protected function configureListFields(ListMapper $list): void

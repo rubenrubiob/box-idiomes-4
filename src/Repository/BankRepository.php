@@ -12,6 +12,8 @@ use Doctrine\Persistence\ManagerRegistry;
 
 final class BankRepository extends ServiceEntityRepository
 {
+    public const string ALIAS = 'b';
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Bank::class);
