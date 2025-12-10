@@ -218,8 +218,11 @@ final class EventAdmin extends AbstractBaseAdmin
         $query = parent::configureQuery($query);
         $rootAlias = current($query->getRootAliases());
         $query
+            ->leftJoin($rootAlias.'.students', 's')
             ->andWhere($rootAlias.'.enabled = :enabled')
             ->setParameter('enabled', true)
+            ->addSelect('COUNT(s.id) AS studentsCount')
+            ->groupBy($rootAlias.'.id')
         ;
 
         return $query;
@@ -282,10 +285,11 @@ final class EventAdmin extends AbstractBaseAdmin
                 ]
             )
             ->add(
-                'studentsAmount',
+                'studentsCount',
                 null,
                 [
                     'label' => 'backend.admin.event.students',
+                    'virtual_field' => true,
                     'template' => 'Admin/Cells/list__cell_classroom_students_amount.html.twig',
                     'header_class' => 'text-center',
                     'row_align' => 'center',
