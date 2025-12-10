@@ -7,16 +7,20 @@ use App\Entity\ClassGroup;
 use App\Entity\Student;
 use App\Entity\StudentEvaluation;
 use App\Enum\ReceiptYearMonthEnum;
+use App\Enum\SchoolYearChoicesGeneratorEnum;
 use App\Enum\StudentEvaluationEnum;
+use App\Model\BeginEndSchoolYearMoment;
 use App\Repository\StudentRepository;
 use Sonata\AdminBundle\Datagrid\DatagridInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
+use Sonata\AdminBundle\Filter\Model\FilterData;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelAutocompleteType;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
+use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
 use Sonata\DoctrineORMAdminBundle\Filter\ModelFilter;
 use Sonata\Form\Type\DatePickerType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -233,6 +237,21 @@ final class StudentEvaluationAdmin extends AbstractBaseAdmin
                 ]
             )
             ->add(
+                'student.schoolYear',
+                CallbackFilter::class,
+                [
+                    'label' => 'backend.admin.class_group.school_year',
+                    'callback' => [$this, 'buildDatagridSchoolYearFilter'],
+                    'required' => true,
+                    'field_type' => ChoiceType::class,
+                    'field_options' => [
+                        'choices' => SchoolYearChoicesGeneratorEnum::getSchoolYearChoicesArray(),
+                        'expanded' => false,
+                        'multiple' => false,
+                    ],
+                ]
+            )
+            ->add(
                 'writting',
                 null,
                 [
@@ -309,6 +328,22 @@ final class StudentEvaluationAdmin extends AbstractBaseAdmin
                 ]
             )
         ;
+    }
+
+    public function buildDatagridSchoolYearFilter(\Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQueryInterface $query, string $alias, string $field, FilterData $data): bool
+    {
+        if ('schoolYear' === $field && $data->hasValue()) {
+            $beginEndSchoolYearMoment = new BeginEndSchoolYearMoment((int) $data->getValue());
+            $query->leftJoin($alias.'.events', 'ev');
+            $query->andWhere('ev.begin > :begin');
+            $query->andWhere('ev.begin < :end');
+            $query->setParameter('begin', $beginEndSchoolYearMoment->getBegin());
+            $query->setParameter('end', $beginEndSchoolYearMoment->getEnd());
+
+            return true;
+        }
+
+        return false;
     }
 
     protected function configureQuery(ProxyQueryInterface $query): ProxyQueryInterface
