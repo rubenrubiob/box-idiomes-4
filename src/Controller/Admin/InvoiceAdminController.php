@@ -22,28 +22,28 @@ final class InvoiceAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function pdfAction(Request $request, ParameterBagInterface $parameterBag): Response
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Invoice $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         $pdf = $this->ibp->build($object);
 
-        return new Response($pdf->Output($parameterBag->get('project_export_filename').'_invoice_'.$object->getSluggedInvoiceNumber().'.pdf'), Response::HTTP_OK, ['Content-type' => 'application/pdf']);
+        return new Response($pdf->Output(sprintf(
+            '%s_invoice_%s.pdf',
+            $parameterBag->get('project_export_filename'),
+            $object->getSluggedInvoiceNumber()
+        )), Response::HTTP_OK, ['Content-type' => 'application/pdf']);
     }
 
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function sendAction(Request $request): RedirectResponse
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Invoice $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         $object
             ->setIsSended(true)
             ->setSendDate(new \DateTimeImmutable())
@@ -63,13 +63,11 @@ final class InvoiceAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function generateDirectDebitAction(Request $request): Response
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Invoice $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         $paymentUniqueId = uniqid('', true);
         $xml = $this->xsbs->buildDirectDebitSingleInvoiceXml($paymentUniqueId, new \DateTime('now + 3 days'), $object);
         $object
@@ -94,13 +92,11 @@ final class InvoiceAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function duplicateAction(Request $request): RedirectResponse
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Invoice $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         // new invoice
         $today = new \DateTimeImmutable();
         $newInvoice = new Invoice();
@@ -150,7 +146,7 @@ final class InvoiceAdminController extends AbstractAdminController
             $xmls = $this->xsbs->buildDirectDebitInvoicesXml($paymentUniqueId, new \DateTime('now + 3 days'), $selectedModels);
             /** @var Invoice $selectedModel */
             foreach ($selectedModels as $selectedModel) {
-                if (StudentPaymentEnum::BANK_ACCOUNT_NUMBER === $selectedModel->getMainSubject()->getPayment() && !$selectedModel->getStudent()->getIsPaymentExempt()) {
+                if (StudentPaymentEnum::BANK_ACCOUNT_NUMBER === $selectedModel->getMainSubject()->getPayment() && !$selectedModel->getStudent()?->getIsPaymentExempt()) {
                     $selectedModel
                         ->setIsSepaXmlGenerated(true)
                         ->setSepaXmlGeneratedDate(new \DateTimeImmutable())

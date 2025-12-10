@@ -267,6 +267,8 @@ final class PreRegisterAdmin extends AbstractBaseAdmin
                     'label' => 'frontend.forms.preregister.date',
                     'editable' => false,
                     'format' => 'd/m/Y H:i',
+                    'header_class' => 'text-center',
+                    'row_align' => 'center',
                 ]
             )
             ->add(
@@ -275,6 +277,8 @@ final class PreRegisterAdmin extends AbstractBaseAdmin
                 [
                     'label' => 'frontend.forms.preregister.season',
                     'template' => 'Admin/Cells/list__cell_pre_register_season.html.twig',
+                    'header_class' => 'text-center',
+                    'row_align' => 'center',
                 ]
             )
             ->add(
@@ -315,6 +319,8 @@ final class PreRegisterAdmin extends AbstractBaseAdmin
                 [
                     'label' => 'frontend.forms.preregister.enabled',
                     'editable' => false,
+                    'header_class' => 'text-center',
+                    'row_align' => 'center',
                 ]
             )
             ->add(

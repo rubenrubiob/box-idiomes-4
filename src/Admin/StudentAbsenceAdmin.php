@@ -4,12 +4,15 @@ namespace App\Admin;
 
 use App\Doctrine\Enum\SortOrderTypeEnum;
 use App\Entity\Student;
+use App\Repository\PersonRepository;
+use App\Repository\StudentRepository;
 use Sonata\AdminBundle\Datagrid\DatagridInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelAutocompleteType;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
+use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\DoctrineORMAdminBundle\Filter\DateFilter;
 use Sonata\DoctrineORMAdminBundle\Filter\ModelFilter;
 use Sonata\Form\Type\DatePickerType;
@@ -135,6 +138,20 @@ final class StudentAbsenceAdmin extends AbstractBaseAdmin
                 ]
             )
         ;
+    }
+
+    protected function configureQuery(\Sonata\AdminBundle\Datagrid\ProxyQueryInterface $query): ProxyQueryInterface
+    {
+        $query = parent::configureQuery($query);
+        $rootAlias = current($query->getRootAliases());
+        $query
+            ->addSelect(StudentRepository::ALIAS)
+            ->addSelect(PersonRepository::ALIAS)
+            ->leftJoin(sprintf('%s.student', $rootAlias), StudentRepository::ALIAS)
+            ->leftJoin(sprintf('%s.parent', StudentRepository::ALIAS), PersonRepository::ALIAS)
+        ;
+
+        return $query;
     }
 
     protected function configureListFields(ListMapper $list): void

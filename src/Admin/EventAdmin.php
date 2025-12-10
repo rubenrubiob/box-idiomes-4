@@ -3,15 +3,18 @@
 namespace App\Admin;
 
 use App\Doctrine\Enum\SortOrderTypeEnum;
+use App\Entity\AbstractBase;
 use App\Entity\ClassGroup;
 use App\Entity\Event;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Enum\EventClassroomTypeEnum;
+use App\Repository\StudentRepository;
 use Sonata\AdminBundle\Datagrid\DatagridInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\DoctrineORMAdminBundle\Filter\DateTimeFilter;
@@ -218,8 +221,11 @@ final class EventAdmin extends AbstractBaseAdmin
         $query = parent::configureQuery($query);
         $rootAlias = current($query->getRootAliases());
         $query
-            ->andWhere($rootAlias.'.enabled = :enabled')
+            ->addSelect(sprintf('COUNT(%s.id) AS studentsCount', StudentRepository::ALIAS))
+            ->leftJoin(sprintf('%s.students', $rootAlias), StudentRepository::ALIAS)
+            ->andWhere(sprintf('%s.enabled = :enabled', $rootAlias))
             ->setParameter('enabled', true)
+            ->groupBy(sprintf('%s.id', $rootAlias))
         ;
 
         return $query;
@@ -230,10 +236,10 @@ final class EventAdmin extends AbstractBaseAdmin
         $list
             ->add(
                 'begin',
-                'date',
+                FieldDescriptionInterface::TYPE_DATETIME,
                 [
                     'label' => 'backend.admin.event.begin',
-                    'format' => 'd/m/Y H:i',
+                    'format' => AbstractBase::DATETIME_STRING_FORMAT,
                     'editable' => false,
                     'header_class' => 'text-center',
                     'row_align' => 'center',
@@ -241,10 +247,10 @@ final class EventAdmin extends AbstractBaseAdmin
             )
             ->add(
                 'end',
-                'date',
+                FieldDescriptionInterface::TYPE_DATETIME,
                 [
                     'label' => 'backend.admin.event.end',
-                    'format' => 'd/m/Y H:i',
+                    'format' => AbstractBase::DATETIME_STRING_FORMAT,
                     'editable' => false,
                     'header_class' => 'text-center',
                     'row_align' => 'center',
@@ -282,10 +288,11 @@ final class EventAdmin extends AbstractBaseAdmin
                 ]
             )
             ->add(
-                'studentsAmount',
+                'studentsCount',
                 null,
                 [
                     'label' => 'backend.admin.event.students',
+                    'virtual_field' => true,
                     'template' => 'Admin/Cells/list__cell_classroom_students_amount.html.twig',
                     'header_class' => 'text-center',
                     'row_align' => 'center',

@@ -20,12 +20,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         ),
     ]
 )]
-class StudentEvaluation extends AbstractBase
+class StudentEvaluation extends AbstractBase implements \Stringable
 {
     use StudentTrait;
 
     #[ORM\JoinColumn(name: 'student_id', referencedColumnName: 'id', nullable: false)]
-    #[ORM\ManyToOne(targetEntity: Student::class)]
+    #[ORM\ManyToOne(targetEntity: Student::class, fetch: 'EAGER')]
     private Student $student;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['default' => false])]

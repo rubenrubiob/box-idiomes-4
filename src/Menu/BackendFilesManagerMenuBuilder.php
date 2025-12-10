@@ -19,7 +19,7 @@ class BackendFilesManagerMenuBuilder
     {
         $route = null;
         if ($requestStack->getCurrentRequest()) {
-            $route = $requestStack->getCurrentRequest()->get('_route');
+            $route = $requestStack->getCurrentRequest()->attributes->get('_route');
         }
         $menu = $this->factory->createItem('Fitxers');
         $menu

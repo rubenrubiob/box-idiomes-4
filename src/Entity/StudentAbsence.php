@@ -11,11 +11,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: StudentAbsenceRepository::class)]
 #[UniqueEntity(['student', 'day'])]
 #[ORM\Table(name: 'student_absence')]
-class StudentAbsence extends AbstractBase
+class StudentAbsence extends AbstractBase implements \Stringable
 {
     use StudentTrait;
 
-    #[ORM\ManyToOne(targetEntity: Student::class)]
+    #[ORM\ManyToOne(targetEntity: Student::class, fetch: 'EAGER')]
     private Student $student;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: false)]

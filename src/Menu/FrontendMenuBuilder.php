@@ -28,7 +28,7 @@ class FrontendMenuBuilder
     {
         $current = '';
         if ($this->rs->getCurrentRequest()) {
-            $current = $this->rs->getCurrentRequest()->get('_route');
+            $current = $this->rs->getCurrentRequest()->attributes->get('_route');
         }
         $menu = $this->factory->createItem('root');
         $menu->setChildrenAttribute('class', 'navbar-nav ms-auto mb-2 mb-lg-0');

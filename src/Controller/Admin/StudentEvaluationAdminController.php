@@ -17,13 +17,10 @@ final class StudentEvaluationAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_MANAGER)]
     public function previewAction(Request $request, ParameterBagInterface $parameterBag, SluggerInterface $slugger): Response
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var StudentEvaluation $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
         $this->admin->checkAccess('show', $object);
         $pdf = $this->sebp->build($object);
 
@@ -33,13 +30,10 @@ final class StudentEvaluationAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_MANAGER)]
     public function notificationAction(Request $request): RedirectResponse
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var StudentEvaluation $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
         $this->admin->checkAccess('show', $object);
         $object
             ->setHasBeenNotified(true)

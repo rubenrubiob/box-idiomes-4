@@ -63,8 +63,8 @@ final class ReceiptAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function creatorAction(Request $request): RedirectResponse
     {
-        $generateReceipt = $this->grfm->transformRequestArrayToModel($request->get('generate_receipt'));
-        if (array_key_exists('generate_and_send', $request->get(GenerateReceiptType::NAME))) {
+        $generateReceipt = $this->grfm->transformRequestArrayToModel($request->request->all(GenerateReceiptType::NAME));
+        if (array_key_exists('generate_and_send', $request->request->all(GenerateReceiptType::NAME))) {
             // generate receipts and send it by email
             $recordsParsed = $this->grfm->persistAndDeliverFullModelForm($generateReceipt);
         } else {
@@ -83,13 +83,11 @@ final class ReceiptAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function createInvoiceAction(Request $request): Response
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Receipt $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         $invoice = $this->rm->createInvoiceFromReceipt($object);
         $this->mr->getManager()->persist($invoice);
         $this->mr->getManager()->flush();
@@ -101,15 +99,13 @@ final class ReceiptAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function reminderAction(Request $request, ParameterBagInterface $parameterBag): Response
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Receipt $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         if (StudentPaymentEnum::BANK_ACCOUNT_NUMBER === $object->getMainSubject()->getPayment()) {
-            throw $this->createNotFoundException(sprintf('invalid payment type for object with id: %s', $id));
+            throw $this->createNotFoundException(sprintf('invalid payment type for object with id: %s', $object->getId()));
         }
         $pdf = $this->rbp->build($object);
 
@@ -119,15 +115,13 @@ final class ReceiptAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function sendReminderAction(Request $request): RedirectResponse
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Receipt $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         if (StudentPaymentEnum::BANK_ACCOUNT_NUMBER === $object->getMainSubject()->getPayment()) {
-            throw $this->createNotFoundException(sprintf('invalid payment type for object with id: %s', $id));
+            throw $this->createNotFoundException(sprintf('invalid payment type for object with id: %s', $object->getId()));
         }
         $pdf = $this->rbp->build($object);
         $result = $this->ns->sendReceiptReminderPdfNotification($object, $pdf);
@@ -143,13 +137,11 @@ final class ReceiptAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function pdfAction(Request $request, ParameterBagInterface $parameterBag): Response
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Receipt $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         $pdf = $this->rbp->build($object);
 
         return new Response($pdf->Output($parameterBag->get('project_export_filename').'_receipt_'.$object->getSluggedReceiptNumber().'.pdf'), Response::HTTP_OK, ['Content-type' => 'application/pdf']);
@@ -158,13 +150,11 @@ final class ReceiptAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function sendAction(Request $request): RedirectResponse
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Receipt $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         $object
             ->setIsSended(true)
             ->setSendDate(new \DateTimeImmutable())
@@ -187,13 +177,11 @@ final class ReceiptAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function generateDirectDebitAction(Request $request): Response
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var Receipt $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         $paymentUniqueId = uniqid('', true);
         $xml = $this->xsbs->buildDirectDebitSingleReceiptXml($paymentUniqueId, new \DateTime('now + 3 days'), $object);
         $object
