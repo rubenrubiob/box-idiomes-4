@@ -54,6 +54,7 @@ final class StudentEvaluationAdmin extends AbstractBaseAdmin
         $query = parent::configureQuery($query);
         $rootAlias = current($query->getRootAliases());
         $query
+            ->addSelect(StudentRepository::ALIAS)
             ->leftJoin(sprintf('%s.student', $rootAlias), StudentRepository::ALIAS)
             ->addOrderBy(sprintf('%s.evaluation', $rootAlias), SortOrderTypeEnum::ASC)
             ->addOrderBy(sprintf('%s.surname', StudentRepository::ALIAS), SortOrderTypeEnum::ASC)

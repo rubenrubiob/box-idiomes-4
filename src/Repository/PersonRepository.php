@@ -11,6 +11,8 @@ use Doctrine\Persistence\ManagerRegistry;
 
 final class PersonRepository extends ServiceEntityRepository
 {
+    public const string ALIAS = 'p';
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Person::class);
@@ -18,11 +20,11 @@ final class PersonRepository extends ServiceEntityRepository
 
     public function getEnabledSortedBySurnameQB(): QueryBuilder
     {
-        return $this->createQueryBuilder('p')
-            ->where('p.enabled = :enabled')
+        return $this->createQueryBuilder(self::ALIAS)
+            ->where(sprintf('%s.enabled = :enabled', self::ALIAS))
             ->setParameter('enabled', true)
-            ->orderBy('p.surname', SortOrderTypeEnum::ASC)
-            ->addOrderBy('p.name', SortOrderTypeEnum::ASC);
+            ->orderBy(sprintf('%s.surname', self::ALIAS), SortOrderTypeEnum::ASC)
+            ->addOrderBy(sprintf('%s.name', self::ALIAS), SortOrderTypeEnum::ASC);
     }
 
     public function getEnabledSortedBySurnameQ(): Query

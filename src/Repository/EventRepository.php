@@ -14,6 +14,8 @@ use Doctrine\Persistence\ManagerRegistry;
 
 final class EventRepository extends ServiceEntityRepository
 {
+    public const string ALIAS = 'e';
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Event::class);
