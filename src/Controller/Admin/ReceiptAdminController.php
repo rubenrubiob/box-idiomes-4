@@ -63,8 +63,8 @@ final class ReceiptAdminController extends AbstractAdminController
     #[IsGranted(UserRolesEnum::ROLE_ADMIN)]
     public function creatorAction(Request $request): RedirectResponse
     {
-        $generateReceipt = $this->grfm->transformRequestArrayToModel($request->query->get('generate_receipt'));
-        if (array_key_exists('generate_and_send', $request->query->get(GenerateReceiptType::NAME))) { // TODO be careful, is not so direct
+        $generateReceipt = $this->grfm->transformRequestArrayToModel($request->request->all(GenerateReceiptType::NAME));
+        if (array_key_exists('generate_and_send', $request->request->all(GenerateReceiptType::NAME))) {
             // generate receipts and send it by email
             $recordsParsed = $this->grfm->persistAndDeliverFullModelForm($generateReceipt);
         } else {

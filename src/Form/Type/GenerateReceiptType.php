@@ -10,7 +10,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class GenerateReceiptType extends GenerateReceiptYearMonthChooserType
 {
-    public const NAME = 'generate_receipt';
+    public const string NAME = 'generate_receipt';
 
     private RouterInterface $rs;
 
