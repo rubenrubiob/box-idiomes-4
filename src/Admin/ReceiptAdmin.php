@@ -483,19 +483,13 @@ final class ReceiptAdmin extends AbstractBaseAdmin
     {
         $list
             ->add(
-                'numberoflines',
-                null,
-                [
-                    'label' => 'backend.admin.receipt.id',
-                    'virtual_field' => true,
-                ]
-            )
-            ->add(
                 'id',
                 null,
                 [
                     'label' => 'backend.admin.receipt.id',
                     'template' => 'Admin/Cells/list__cell_receipt_number.html.twig',
+                    'header_class' => 'text-right',
+                    'row_align' => 'right',
                 ]
             )
             ->add(

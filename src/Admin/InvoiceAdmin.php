@@ -536,6 +536,8 @@ final class InvoiceAdmin extends AbstractBaseAdmin
                 [
                     'label' => 'backend.admin.invoice.id',
                     'template' => 'Admin/Cells/list__cell_invoice_number.html.twig',
+                    'header_class' => 'text-right',
+                    'row_align' => 'right',
                 ]
             )
             ->add(
