@@ -10,6 +10,8 @@ use App\Entity\Student;
 use App\Entity\TrainingCenter;
 use App\Enum\InvoiceYearMonthEnum;
 use App\Enum\StudentPaymentEnum;
+use App\Repository\PersonRepository;
+use App\Repository\StudentRepository;
 use Sonata\AdminBundle\Datagrid\DatagridInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -516,10 +518,10 @@ final class InvoiceAdmin extends AbstractBaseAdmin
         $query = parent::configureQuery($query);
         $rootAlias = current($query->getRootAliases());
         $query
-            ->addSelect('s')
-            ->addSelect('p')
-            ->leftJoin($rootAlias.'.student', 's')
-            ->leftJoin('s.parent', 'p')
+            ->addSelect(StudentRepository::ALIAS)
+            ->addSelect(PersonRepository::ALIAS)
+            ->leftJoin(sprintf('%s.student', $rootAlias), StudentRepository::ALIAS)
+            ->leftJoin(sprintf('%s.parent', StudentRepository::ALIAS), PersonRepository::ALIAS)
         ;
 
         return $query;
