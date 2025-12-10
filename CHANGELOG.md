@@ -1,8 +1,14 @@
 Changelog
 =========
 
-##### Version 5.8.07 (WIP)
+##### Version 5.8.08 (WIP)
  * fix bugs
+
+##### Version 5.8.07 (2025-12-10)
+ * Symfony v7.4 LTS upgrade
+ * better admin list view column alignements
+ * apply some addSelects into configureQuery to reduce admin list view queries amount
+ * remove $request->get deprecations
 
 ##### Version 5.8.06 (2025-12-09)
  * improve admin top logo bar
