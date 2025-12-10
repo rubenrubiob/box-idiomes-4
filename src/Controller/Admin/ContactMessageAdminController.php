@@ -40,13 +40,11 @@ final class ContactMessageAdminController extends AbstractAdminController
      */
     public function answerAction(Request $request): Response
     {
-        $this->assertObjectExists($request, true);
-        $id = $request->get($this->admin->getIdParameter());
         /** @var ContactMessage $object */
-        $object = $this->admin->getObject($id);
-        if (!$object) {
-            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
-        }
+        $object = $this->assertObjectExists($request, true);
+        \assert(null !== $object);
+        $this->checkParentChildAssociation($request, $object);
+        $this->admin->checkAccess('show', $object);
         $form = $this->createForm(ContactMessageAnswerType::class, $object);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

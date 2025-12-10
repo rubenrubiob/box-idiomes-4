@@ -9,6 +9,7 @@ Changelog
  * better admin list view column alignements
  * apply some addSelects into configureQuery to reduce admin list view queries amount
  * remove $request->get deprecations
+ * add student.events.group filter into StudentEvaluationAdmin
 
 ##### Version 5.8.06 (2025-12-09)
  * improve admin top logo bar
