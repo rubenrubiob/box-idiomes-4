@@ -24,6 +24,9 @@ composer/outdated:
 composer/require-checker:
 	@docker exec box-idiomes-php sh -c "composer-require-checker --ignore-parse-errors"
 
+composer/unused:
+	@docker exec box-idiomes-php sh -c "composer-unused"
+
 # Xdebug
 xdebug/enable:
 	@docker exec box-idiomes-php sh -c "cp .docker/php/xdebug-enabled.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
