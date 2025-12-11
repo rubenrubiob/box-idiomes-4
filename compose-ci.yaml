@@ -40,6 +40,9 @@ services:
       - "host.docker.internal:host-gateway"
     networks:
       - box-idiomes-net
+    depends_on:
+        box-idiomes-mysql:
+            condition: service_healthy
 
   box-idiomes-consumer:
     build:
@@ -76,8 +79,11 @@ services:
       MYSQL_DATABASE: box_idiomes_db
       MYSQL_USER: box_idiomes_user
       MYSQL_PASSWORD: box_idiomes_password
-    depends_on:
-      - box-idiomes-php
+    healthcheck:
+        test: "mysql $$MYSQL_DATABASE -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e 'SELECT 1;'"
+        interval: 20s
+        timeout: 10s
+        retries: 5
     networks:
       - box-idiomes-net
 
