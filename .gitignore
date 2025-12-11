@@ -12,9 +12,7 @@
 /src/.preload.php
 .php_cs.cache
 .php-cs-fixer.cache
-.env
 .env.dev
-.env.test
 ###< app/bundle ###
 
 ###> symfony/framework-bundle ###
@@ -59,3 +57,7 @@ phpstan.neon
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
+
+###> docker ###
+/.docker/data/
+###< docker ###

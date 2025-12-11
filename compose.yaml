@@ -1,0 +1,99 @@
+services:
+  box-idiomes-nginx:
+    image: nginx:1.29.3
+    container_name: box-idiomes-nginx
+    working_dir: /var/www/box-idiomes
+    profiles:
+      - dev
+    volumes:
+      - ./:/var/www/box-idiomes:cached
+      - ./.docker/nginx/nginx-dev.conf:/etc/nginx/conf.d/default.conf
+      - ./.docker/nginx/server.crt:/etc/nginx/server.crt:cached
+      - ./.docker/nginx/server.key:/etc/nginx/server.key:cached
+    ports:
+      - "8080:80"
+      - "443:443"
+    hostname: 'box-idiomes.test'
+    networks:
+      - box-idiomes-net
+
+  box-idiomes-php:
+    build:
+      context: .
+      dockerfile: .docker/php/Dockerfile
+      target: development
+    container_name: box-idiomes-php
+    working_dir: /var/www/box-idiomes
+    profiles:
+      - dev
+    volumes:
+      - ./:/var/www/box-idiomes:cached
+      - ./.docker/php/php.ini-development:/usr/local/etc/php/conf.d/custom.ini:cached
+    environment:
+      XDEBUG_SESSION: PHPSTORM
+      PHP_IDE_CONFIG: serverName=docker-localhost
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - box-idiomes-net
+
+  box-idiomes-consumer:
+    build:
+      context: .
+      dockerfile: .docker/php/Dockerfile
+      target: development
+    container_name: box-idiomes-consumer
+    working_dir: /var/www/box-idiomes
+    restart: unless-stopped
+    entrypoint: /usr/local/bin/php /var/www/box-idiomes/bin/console messenger:consume async
+    profiles:
+      - consumer
+    volumes:
+      - ./:/var/www/box-idiomes:cached
+      - ./.docker/php/php.ini-development:/usr/local/etc/php/conf.d/custom.ini:cached
+    environment:
+      XDEBUG_SESSION: PHPSTORM
+      PHP_IDE_CONFIG: serverName=docker-localhost
+    networks:
+      - box-idiomes-net
+
+  box-idiomes-mysql:
+    image: mysql:8.0.44
+    container_name: box-idiomes-mysql
+    profiles:
+      - dev
+    volumes:
+      - ./.docker/data/mysql:/var/lib/mysql:cached
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
+    ports:
+      - "4306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: box_idiomes_db
+      MYSQL_USER: box_idiomes_user
+      MYSQL_PASSWORD: box_idiomes_password
+    depends_on:
+      - box-idiomes-php
+    networks:
+      - box-idiomes-net
+
+  box-idiomes-mailpit:
+    image: axllent/mailpit
+    container_name: box-idiomes-mailpit
+    profiles:
+      - dev
+    ports:
+      - "1026:1025"
+      - "8026:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    depends_on:
+      - box-idiomes-php
+    networks:
+      - box-idiomes-net
+
+networks:
+  box-idiomes-net:
+    name: box-idiomes-net
+    driver: bridge
