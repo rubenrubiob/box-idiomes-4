@@ -32,4 +32,4 @@ runs:
           ${{ runner.os }}-test-docker-
     - name: Start environment
       shell: bash
-      run: COMPOSE_BAKE=true docker compose -f compose-ci.yaml --verbose up -d --wait
+      run: COMPOSE_BAKE=true docker compose -f compose-ci.yaml --profile dev --verbose up -d --wait
