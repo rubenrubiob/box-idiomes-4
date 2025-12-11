@@ -31,13 +31,7 @@ doctrine:
 when@test:
     doctrine:
         dbal:
-            driver: 'pdo_sqlite'
             dbname_suffix: '_test%env(default::TEST_TOKEN)%'
-        orm:
-            dql:
-                datetime_functions:
-                    month: 'DoctrineExtensions\Query\Sqlite\Month'
-                    year: 'DoctrineExtensions\Query\Sqlite\Year'
 
 when@prod:
     doctrine:
