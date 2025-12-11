@@ -21,6 +21,9 @@ composer/validate:
 composer/outdated:
 	@docker exec box-idiomes-php sh -c "composer outdated --minor-only --direct --strict"
 
+composer/require-checker:
+	@docker exec box-idiomes-php sh -c "composer-require-checker --ignore-parse-errors"
+
 # Xdebug
 xdebug/enable:
 	@docker exec box-idiomes-php sh -c "cp .docker/php/xdebug-enabled.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
@@ -138,6 +141,7 @@ install: \
 it: \
 	test/controller \
 	composer/validate \
+	composer/require-checker \
 	doctrine/schema-validate \
 	php/lint \
 	symfony/lint-container \
