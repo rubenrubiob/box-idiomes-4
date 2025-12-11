@@ -16,6 +16,8 @@ services:
     hostname: 'box-idiomes.test'
     networks:
       - box-idiomes-net
+    depends_on:
+      - box-idiomes-php
 
   box-idiomes-php:
     build:
