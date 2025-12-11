@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v5
+      - name: Setup
+        uses: ./.github/actions/setup/
+      # Cleanup
+      - name: Move cache
+        run: |
+          rm -rf /tmp/docker-cache
+          mv /tmp/docker-cache-new /tmp/docker-cache
+      - name: Make composer install
+        run: make composer/install
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [install]
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v5
+      - name: Setup
+        uses: ./.github/actions/setup/
+      - name: Run Controller Tests
+        run: make test/controller
+
+  composer-checks:
+    runs-on: ubuntu-latest
+    needs: [install]
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v5
+      - name: Setup
+        uses: ./.github/actions/setup/
+      - name: Composer Validate
+        run: make composer/validate
+      - name: Composer Require Checker
+        run: make composer/require-checker
+
+  lint-checks:
+    runs-on: ubuntu-latest
+    needs: [install]
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v5
+      - name: Setup
+        uses: ./.github/actions/setup/
+      - name: Lint PHP
+        run: make php/lint
+      - name: Lint Container
+        run: make symfony/lint-container
+      - name: Lint Yaml
+        run: make symfony/lint-yaml
+      - name: Lint Twig
+        run: make symfony/lint-twig
+      - name: Doctrine Schema Validate
+        run: make doctrine/schema-validate
