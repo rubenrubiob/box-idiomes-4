@@ -7,19 +7,18 @@
 ##
 #$ ln -s ../../scripts/githooks/pre-commit .git/hooks/pre-commit
 
-
 FILES=$(git diff --name-only --diff-filter=AM)
 printf '%s\n' "$FILES" | while IFS= read -r FILE
 do
     if [[ $FILE == "src/"* ]]; then
-        ./vendor/bin/php-cs-fixer fix "$FILE" --rules=@Symfony
+        docker exec box-idiomes-php sh -c "vendor/bin/php-cs-fixer fix ${FILE} --config=.php-cs-fixer.dist.php --verbose"
     fi
 done
 FILES=$(git diff --name-only --staged --diff-filter=AM)
 printf '%s\n' "$FILES" | while IFS= read -r FILE
 do
     if [[ $FILE == "src/"* ]]; then
-        ./vendor/bin/php-cs-fixer fix "$FILE" --rules=@Symfony
+        docker exec box-idiomes-php sh -c "vendor/bin/php-cs-fixer fix ${FILE} --config=.php-cs-fixer.dist.php --verbose"
         git add "$FILE"
     fi
 done
