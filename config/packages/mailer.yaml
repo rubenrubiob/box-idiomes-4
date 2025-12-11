@@ -4,12 +4,6 @@ framework:
             main: '%env(MAILER_DSN)%'
             mailing: '%env(MAILING_MAILER_DSN)%'
 
-when@dev:
-    framework:
-        mailer:
-            envelope:
-                recipients: [ '%delivery_dev_address%' ]
-
 when@test:
     framework:
         mailer:
