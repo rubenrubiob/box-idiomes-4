@@ -7,35 +7,56 @@ A Symfony 7.4 LTS project to manage [Box Idiomes](https://www.boxidiomes.cat/adm
 
 #### Installation requirements
 
-* PHP 8.4
-* MySQL 8.0
-* Git 2.0
-* Composer 2.0
-* set php.ini config max_input_vars > 10.000
+* Docker Engine (Docker + Docker Composer)
 
 #### Installation instructions
 
 ```bash
 $ git clone git@github.com:Flexible-User-Experience/box-idiomes-4.git box-idiomes-4
 $ cd box-idiomes-4
-$ cp env.dist .env
-$ nano .env
-$ composer install
-$ php bin/console messenger:consume async --env=prod
+$ make install
 ```
 
-Remember to edit `.env` config file according to your system environment needs.
+At the end, it will ask for your `sudo` password to add the required hosts to `/etc/hosts`.
 
-#### Testing suite commands
+Once finished, access this URL and accept the self-signed certificate: [https://box-idiomes.test](https://box-idiomes.test)
 
-```bash
-$ ./scripts/developer-tools/test-database-reset.sh
-$ ./scripts/developer-tools/run-test.sh
-```
+#### Make commands
+
+`make symfony/messenger-consume`: starts Symfony's messenger consumer.
+
+`make startd`: starts all services in background.
+
+`make stop`: stops all services.
+
+`make start`: starts all services in foreground.
+
+`make restart`: stops all services and starts all services in foreground.
+
+`make restartd`: stops all services and starts all services in background.
+
+`make rebuild`: destroys all containers and recreates them again.
+
+`make code-style/fix`: executes PHP CS Fixer for all files in project
+
+`make it`: simulates the execution of a pipeline
+
+`make test`: executes all test suites
+
+`make test/controller`: executes `controller` test suite
+
+`make doctrine/migration-generate`: generates new migration by performing a diff.
+
+`make doctrine/migration-execute`: executes all pending migrations in dev database.
+
+`make doctrine/db-fixtures`: recreates dev database.
+
+`make doctrine-test/db-fixtures`: recreates test database.
+
+`make bash`: Opens a terminal in PHP's container.
 
 #### Developer important notes
 
-* Read about how to start a local web server instance [here](https://symfony.com/doc/current/setup/symfony_server.html)
 * For now there is a problem with Fullcalendar v6 ES6 modules loading that makes impossible to execute `importmap:update` command
 
 #### Messenger queues
@@ -49,3 +70,27 @@ Execute following link to be sure that php-cs-fixer will be applied automaticall
 ```bash
 $ ln -s ../../scripts/githooks/pre-commit .git/hooks/pre-commit
 ```
+
+#### Useful tips
+
+`docker image prune -a -f`: Remove unused Docker images.
+
+`docker builder prune -a -f`: Clean up Docker's build cache.
+
+`docker system prune -a -f`: Clean up various Docker unused resources.
+
+`docker compose down -v --rmi all --remove-orphans`: Removes all for services not defined in `compose.yaml`.
+
+## URLs and credentials
+
+- Extranet
+    - [https://box-idiomes.test](https://neopro-extranet.test)
+    - User: `super_admin@email.com`
+    - Password: `12345678`
+- Mailpit:
+    - [http://localhost:8026/](http://localhost:8026/)
+- MySQL:
+    - User: `root`
+    - Password: `root`
+    - Host port: `4036`
+    - Database: `neopro_extranet_db`
