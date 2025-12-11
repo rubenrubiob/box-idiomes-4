@@ -15,6 +15,9 @@ php/lint:
 composer/install:
 	@docker exec box-idiomes-php sh -c "composer install"
 
+composer/execute-autoscripts:
+	@docker exec box-idiomes-php sh -c "composer run-script auto-scripts"
+
 composer/validate:
 	@docker exec box-idiomes-php sh -c "composer validate --strict"
 
